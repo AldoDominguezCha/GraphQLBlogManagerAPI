@@ -99,10 +99,9 @@ const Mutation = {
         return deletedUser
     },
 
-    async updateUser(parent, args, { prisma }, info) {
+    async updateUser(parent, args, { prisma, request }, info) {
 
-        
-        const password = await bcrypt.hash(args.data.password, 10)
+        const userId = getUserId(request)
 
         const updateValues = {
             ...args.data
@@ -116,7 +115,7 @@ const Mutation = {
 
         return prisma.user.update({
             where : {
-                id : args.id
+                id : userId
             },
             data : updateValues
         })
