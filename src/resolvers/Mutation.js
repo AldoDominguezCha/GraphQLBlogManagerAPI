@@ -154,15 +154,24 @@ const Mutation = {
 
     },
 
-    async deletePost(parent, args, { prisma, pubsub }, info) {
+    async deletePost(parent, args, { prisma, pubsub, request }, info) {
 
-        const post = await prisma.post.findUnique({
+        const userId = getUserId(request)
+
+        const post = await prisma.post.findFirst({
             where : {
-                id : args.id
+                AND : [
+                    {
+                        id : args.id
+                    },
+                    {
+                        authorId : userId
+                    }
+                ]
             }
         })
 
-        if(!post) throw new Error('The post you are trying to delete was not found.')
+        if(!post) throw new Error('The post you are trying to delete was not found or does not belong to you.')
 
         await prisma.comment.deleteMany({
             where : {
