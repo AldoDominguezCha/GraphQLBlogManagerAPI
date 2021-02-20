@@ -189,14 +189,23 @@ const Mutation = {
 
     },
 
-    async updatePost(parent, args, { prisma, pubsub }, info) {
+    async updatePost(parent, args, { prisma, pubsub, request }, info) {
 
-        const originalPost = await prisma.post.findUnique({
+        const userId = getUserId(request)
+
+        const originalPost = await prisma.post.findFirst({
             where : {
-                id : args.id
+                AND : [
+                    {
+                        id : args.id
+                    },
+                    {
+                        authorId : userId
+                    }
+                ]
             }
         })
-        if(!originalPost) throw new Error('The post was not found.')
+        if(!originalPost) throw new Error('The post was not found or it does not belong to you.')
 
         const post = await prisma.post.update({
             where : { id : originalPost.id },
