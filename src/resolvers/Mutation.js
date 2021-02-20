@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
+import getUserId from './../utils/getUserId'
 const jwt = require('jsonwebtoken')
 
 const Mutation = {
@@ -121,10 +122,13 @@ const Mutation = {
         })
     },
 
-    async createPost(parent, args, { prisma, pubsub }, info) {
+    async createPost(parent, args, { prisma, pubsub, request }, info) {
+
+        const userId = getUserId(request)
+
         const author = await prisma.user.findUnique({
             where : {
-                id : args.data.authorId
+                id : userId
             }
         })
         if(!author) throw new Error("The provided ID doesn't match with any user.")
@@ -132,6 +136,7 @@ const Mutation = {
         const post = await prisma.post.create({
             data : {
                 id : uuidv4(),
+                authorId : userId,
                 ...args.data
             }
         }) 
