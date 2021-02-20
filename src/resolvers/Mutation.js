@@ -1,7 +1,27 @@
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
+const jwt = require('jsonwebtoken')
 
 const Mutation = {
+    async login(parent, args, { prisma }, info) {
+
+        const user = await prisma.user.findUnique({
+            where : {
+                email : args.email
+            }
+        })
+        if(!user)
+            throw new Error('The user with the provided email was not found.')
+        const isMatch = await bcrypt.compare(args.password, user.password)
+        if(!isMatch)
+            throw new Error('The password is incorrect.')
+        return {
+            user,
+            token : jwt.sign({ userId : user.id }, 'secret')
+        }
+
+    },
+
     async createUser(parent, args, { prisma }, info) {
         if(args.data.password.length < 7)
             throw new Error('The password must be at least 7 characters long.')
@@ -26,7 +46,10 @@ const Mutation = {
                 password
             }
         })
-        return user
+        return {
+            user,
+            token : jwt.sign({ userId : user.id }, 'secret')
+        }
     },
 
     async deleteUser(parent, args, { prisma }, info) {
