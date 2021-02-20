@@ -9,7 +9,7 @@ type Query {
 type Mutation {
     login(email: String!, password: String!): AuthPayload!
     createUser(data: CreateUserInput!): AuthPayload!
-    deleteUser(id: ID!): User!
+    deleteUser: User!
     updateUser(data: updateUserInput): User!
     createPost(data: CreatePostInput!): Post!
     deletePost(id: ID!): Post!

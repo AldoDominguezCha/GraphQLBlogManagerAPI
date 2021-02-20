@@ -53,11 +53,13 @@ const Mutation = {
         }
     },
 
-    async deleteUser(parent, args, { prisma }, info) {
+    async deleteUser(parent, args, { prisma, request }, info) {
+
+        const userId = getUserId(request)
 
         const user = await prisma.user.findUnique({
             where : {
-                id : args.id
+                id : userId
             }
         })
 
