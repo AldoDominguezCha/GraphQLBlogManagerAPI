@@ -246,11 +246,13 @@ const Mutation = {
         return post
     },
 
-    async createComment(parent, args, { prisma, pubsub }, info) {
+    async createComment(parent, args, { prisma, pubsub, request }, info) {
+
+        const userId = getUserId(request)
 
         const user = await prisma.user.findUnique({
             where : {
-                id : args.data.authorId
+                id : userId
             }
         })
 
@@ -272,7 +274,8 @@ const Mutation = {
         const comment = await prisma.comment.create({
             data : {
                 id : uuidv4(),
-                ...args.data
+                ...args.data,
+                authorId : user.id
             }
         }) 
         
@@ -285,15 +288,32 @@ const Mutation = {
         return comment
     },
 
-    async deleteComment(parent, args, { prisma, pubsub }, info) {
+    async deleteComment(parent, args, { prisma, pubsub, request }, info) {
 
-        const deletedComment = await prisma.comment.delete({
+        const userId = getUserId(request)
+
+        const comment = await prisma.comment.findFirst({
             where : {
-                id : args.id
+                AND : [
+                    {
+                        id : args.id
+                    },
+                    {
+                        authorId : userId
+                    }
+                ]
             }
         })
 
-        if(!deletedComment) throw new Error('The comment you are trying to delete was not found.')
+        if(!comment) throw new Error('The comment you are trying to delete was not found or it does not belong to you.')
+
+        const deletedComment = await prisma.comment.delete({
+            where : {
+                id : comment.id
+            }
+        })
+
+        
 
         pubsub.publish(`comment:${deletedComment.postId}`, {
             comment : {
@@ -305,14 +325,24 @@ const Mutation = {
         return deletedComment
     },
 
-    async updateComment(parent, args, { prisma, pubsub }, info) {
+    async updateComment(parent, args, { prisma, pubsub, request }, info) {
         const { id, data } = args
-        const comment = await prisma.comment.findUnique({
+
+        const userId = getUserId(request)
+
+        const comment = await prisma.comment.findFirst({
             where : {
-                id
+                AND : [
+                    {
+                        id
+                    },
+                    {
+                        authorId : userId
+                    }
+                ]
             }
         })
-        if(!comment) throw new Error('The comment was not found.')
+        if(!comment) throw new Error('The comment was not found or it does not belong to you.')
 
         if(typeof data.text !== 'string')
             throw new Error('You need to provide a valid string for the update.')
