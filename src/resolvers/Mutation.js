@@ -53,7 +53,7 @@ const Mutation = {
         }
     },
 
-    async deleteUser(parent, args, { prisma, request }, info) {
+    async deleteUser(parent, args, { prisma, request, pubsub }, info) {
 
         const userId = getUserId(request)
 
@@ -98,6 +98,13 @@ const Mutation = {
             }
         })
 
+        pubsub.publish(`user:${deletedUser.id}`, {
+            myUser : {
+                mutation : "DELETED",
+                data : deletedUser
+            }
+        })
+
         return deletedUser
     },
 
@@ -114,6 +121,7 @@ const Mutation = {
                 throw new Error('The password must be at least 7 characters long.')
             updateValues.password = await bcrypt.hash(args.data.password, 10)
         }
+
 
         return prisma.user.update({
             where : {
