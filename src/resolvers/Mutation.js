@@ -216,6 +216,11 @@ const Mutation = {
 
         if(typeof args.data.published === 'boolean') {
             if(originalPost.published && !post.published) {
+                await prisma.comment.deleteMany({
+                    where : {
+                        postId : originalPost.id
+                    }
+                })
                 pubsub.publish('post', {
                     post : {
                         mutation : "DELETED",

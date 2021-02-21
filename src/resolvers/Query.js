@@ -7,18 +7,9 @@ const Query = {
         
         if(args.query)
             opArgs.where = {
-                OR : [
-                    {
-                        name : {
-                            contains : args.query
-                        }
-                    },
-                    {
-                        email : {
-                            contains : args.query
-                        }
-                    }
-                ]
+                name : {
+                    contains : args.query
+                }
             }
         return prisma.user.findMany(opArgs)
     },
