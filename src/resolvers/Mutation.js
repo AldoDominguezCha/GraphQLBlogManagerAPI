@@ -1,7 +1,8 @@
+const jwt = require('jsonwebtoken')
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import getUserId from './../utils/getUserId'
-const jwt = require('jsonwebtoken')
+import generateToken from './../utils/generateToken'
 
 const Mutation = {
     async login(parent, args, { prisma }, info) {
@@ -18,7 +19,7 @@ const Mutation = {
             throw new Error('The password is incorrect.')
         return {
             user,
-            token : jwt.sign({ userId : user.id }, 'secret')
+            token : generateToken(user.id)
         }
 
     },
@@ -49,7 +50,7 @@ const Mutation = {
         })
         return {
             user,
-            token : jwt.sign({ userId : user.id }, 'secret')
+            token : generateToken(user.id)
         }
     },
 
