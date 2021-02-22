@@ -4,6 +4,22 @@ const Query = {
     users(parent, args, { prisma }, info){
 
         const opArgs = {}
+
+        opArgs.orderBy = {
+            email : 'asc'
+        }
+
+        if(args.skip)
+            opArgs.skip = args.skip
+        if(args.first)
+            opArgs.take = args.first
+        if(args.after)
+            opArgs.cursor = {
+                id : args.after
+            }
+
+
+        
         
         if(args.query)
             opArgs.where = {
@@ -16,6 +32,19 @@ const Query = {
     posts(parent, args, { prisma }, info){
         
         const opArgs = {}
+
+        opArgs.orderBy = {
+            body : 'asc'
+        }
+
+        if(args.first)
+            opArgs.take = args.first
+        if(args.skip)
+            opArgs.skip = args.skip
+        if(args.after)
+            opArgs.cursor = {
+                id : args.after
+            }
 
         if(args.query)
             opArgs.where = {
@@ -49,6 +78,19 @@ const Query = {
     comments(parent, args, { prisma }, info){
         
         const opArgs = {}
+
+        opArgs.orderBy = {
+            text : 'asc'
+        }
+
+        if(args.first)
+            opArgs.take = args.first
+        if(args.skip)
+            opArgs.skip = args.skip
+        if(args.after)
+            opArgs.cursor = {
+                id : args.after
+            }
 
         if(args.query)
             opArgs.where = {
@@ -128,6 +170,19 @@ const Query = {
         const userId = getUserId(request)
 
         const opArgs = {}
+
+        opArgs.orderBy = {
+            body : 'asc'
+        }
+
+        if(args.first)
+            opArgs.take = args.first
+        if(args.skip)
+            opArgs.skip = args.skip
+        if(args.after)
+            opArgs.cursor = {
+                id : args.after
+            }
 
         if(args.query)
             opArgs.where = {
