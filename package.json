@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node src/index.js",
-    "dev" : "env-cmd -f ./dev.env babel-node src/index.js",
-    "prod" : "env-cmd -f ./prod.env babel-node src/index.js"
+    "start": "env-cmd -f ./dev.env node dist/index.js",
+    "dev": "env-cmd -f ./dev.env babel-node src/index.js",
+    "prod": "env-cmd -f ./prod.env babel-node src/index.js",
+    "heroku-postbuild": "babel src --out-dir dist --copy-files"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@prisma/client": "^2.16.1",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
