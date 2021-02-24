@@ -1,7 +1,7 @@
 type Query {
-    users(query: String, first: Int, skip: Int, after: String): [User!]!
-    posts(query: String, first: Int, skip: Int, after: String): [Post!]!
-    comments(query: String, first: Int, skip: Int, after: String): [Comment!]!
+    users(query: String, first: Int, skip: Int, after: String, orderByCreatedAt: orderByCreatedAt): [User!]!
+    posts(query: String, first: Int, skip: Int, after: String, orderByCreatedAt: orderByCreatedAt): [Post!]!
+    comments(query: String, first: Int, skip: Int, after: String, orderByCreatedAt: orderByCreatedAt): [Comment!]!
     post(id: ID!): Post!
     me: User!
     myPosts(query: String, first: Int, skip: Int, after: String): [Post!]!
@@ -93,6 +93,11 @@ enum MutationType {
     CREATED
     UPDATED
     DELETED
+}
+
+enum orderByCreatedAt {
+    DESC
+    ASC
 }
 
 type PostSubscriptionPayload {

@@ -5,9 +5,14 @@ const Query = {
 
         const opArgs = {}
 
-        opArgs.orderBy = {
-            email : 'asc'
-        }
+        if(args.orderByCreatedAt === "ASC")
+            opArgs.orderBy = {
+                createdAt : 'asc'
+            }
+        else if(args.orderByCreatedAt === "DESC")
+            opArgs.orderBy = {
+                createdAt : 'desc'
+            }
 
         if(args.skip)
             opArgs.skip = args.skip
@@ -33,9 +38,14 @@ const Query = {
         
         const opArgs = {}
 
-        opArgs.orderBy = {
-            body : 'asc'
-        }
+        if(args.orderByCreatedAt && args.orderByCreatedAt === "ASC")
+            opArgs.orderBy = {
+                createdAt : 'asc'
+            }
+        else if(args.orderByCreatedAt && args.orderByCreatedAt === "DESC")
+            opArgs.orderBy = {
+                createdAt : 'desc'
+            }
 
         if(args.first)
             opArgs.take = args.first
@@ -79,9 +89,14 @@ const Query = {
         
         const opArgs = {}
 
-        opArgs.orderBy = {
-            text : 'asc'
-        }
+        if(args.orderByCreatedAt && args.orderByCreatedAt === "ASC")
+            opArgs.orderBy = {
+                createdAt : 'asc'
+            }
+        else if(args.orderByCreatedAt && args.orderByCreatedAt === "DESC")
+            opArgs.orderBy = {
+                createdAt : 'desc'
+            }
 
         if(args.first)
             opArgs.take = args.first
