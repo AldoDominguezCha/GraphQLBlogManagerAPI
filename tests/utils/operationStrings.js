@@ -51,4 +51,84 @@ const getProfile = gql`
         }
 `
 
-export { createUserMutation, getUsers, login, getProfile }
+const getPosts = gql` 
+        query {
+            posts {
+                id
+                title
+                body
+                published
+            }
+        }
+`
+const myPostsQuery = gql` 
+        query {
+            myPosts {
+                id
+                title
+                body
+                published
+                author {
+                    id
+                    name
+                }
+            }
+        }
+`
+
+const updatePost = gql`
+    mutation ($id:ID!, $data:updatePostInput!) {
+        updatePost (
+            id: $id,
+            data : $data
+
+        ) {
+            id
+            title
+            body
+            published
+        }
+    }
+`
+
+const createPostMutation = gql`
+    mutation ($data: CreatePostInput!) {
+        createPost(
+            data : $data
+        ){
+            id
+            title
+            body
+            published
+            author {
+                id
+                name
+            }
+        }
+    }
+`
+
+const deletePostMutation = gql`
+    mutation ($id: ID!) {
+        deletePost (
+            id : $id
+        ) {
+            id
+            title
+            body
+            published
+        }
+    }
+`
+
+export { 
+    createUserMutation, 
+    getUsers, 
+    login, 
+    getProfile, 
+    getPosts, 
+    myPostsQuery, 
+    updatePost, 
+    createPostMutation, 
+    deletePostMutation
+}

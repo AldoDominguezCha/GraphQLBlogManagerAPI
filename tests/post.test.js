@@ -4,6 +4,7 @@ import { gql } from '@apollo/client';
 import prisma from './../src/db'
 import { seedDatabase, cleanDatabase, userOne, postOne, postTwo } from './utils/SeedAndCleanDB';
 import { getClient } from './utils/getClient'
+import { getPosts, myPostsQuery, updatePost, createPostMutation, deletePostMutation } from './utils/operationStrings'
 
 const client = getClient()
 
@@ -12,16 +13,7 @@ beforeEach(seedDatabase)
 afterAll(cleanDatabase)
 
 test('Should retrieve published posts only', async () => {
-    const getPosts = gql` 
-        query {
-            posts {
-                id
-                title
-                body
-                published
-            }
-        }
-    `
+    
     const response = await client.query({
         query : getPosts
     })
@@ -32,21 +24,9 @@ test('Should retrieve published posts only', async () => {
 })
 
 test('Should retrieve all post for the authenticaed user', async () => {
+    
     const client = getClient(userOne.jwt)
-    const myPostsQuery = gql` 
-        query {
-            myPosts {
-                id
-                title
-                body
-                published
-                author {
-                    id
-                    name
-                }
-            }
-        }
-    `
+    
     const { data } = await client.query({ query : myPostsQuery })
     expect(data.myPosts).toHaveLength(2)
     const sameAuthor = data.myPosts.every((post) => post.author.name === userOne.user.name)
@@ -57,25 +37,17 @@ test('Should retrieve all post for the authenticaed user', async () => {
 
 test('Should be able to update own post', async () => {
     const client = getClient(userOne.jwt)
-    const updatePost = gql`
-        mutation {
-            updatePost (
-                id: "${postOne.post.id}",
-                data : {
-                    published : false,
-                    title: "updatedPostTest",
-                    body: "Updated as part of a test in Jest."
-                }
-
-            ) {
-                id
-                title
-                body
-                published
-            }
+    
+    const variables = {
+        id : postOne.post.id,
+        data : {
+            published : false,
+            title: "updatedPostTest",
+            body: "Updated as part of a test in Jest."
         }
-    `
-    const { data } = await client.mutate({ mutation : updatePost })
+    }
+
+    const { data } = await client.mutate({ mutation : updatePost, variables })
     expect(data.updatePost).toHaveProperty('id', postOne.post.id)
     expect(data.updatePost).toHaveProperty('published', false)
     expect(data.updatePost).toHaveProperty('title', 'updatedPostTest')
@@ -95,27 +67,16 @@ test('Should be able to update own post', async () => {
 
 test('Should create post for an authenticated user', async () => {
     const client = getClient(userOne.jwt)
-    const createPostMutation = gql`
-        mutation {
-            createPost(
-                data : {
-                    title : "TestingCreatePostMutation",
-                    body : "Created as a part of a test in Jest for the automated testing suite.",
-                    published : true
-                }
-            ){
-                id
-                title
-                body
-                published
-                author {
-                    id
-                    name
-                }
-            }
+    
+    const variables = {
+        data : {
+            title : "TestingCreatePostMutation",
+            body : "Created as a part of a test in Jest for the automated testing suite.",
+            published : true
         }
-    `
-    const { data } = await client.mutate({ mutation : createPostMutation })
+    }
+
+    const { data } = await client.mutate({ mutation : createPostMutation, variables })
     expect(data.createPost.author).toHaveProperty('id', userOne.user.id)
     expect(data.createPost.author).toHaveProperty('name', userOne.user.name)
     
@@ -138,20 +99,12 @@ test('Should create post for an authenticated user', async () => {
 
 test('Should delete the post belonging to an authenticated user', async () => {
     const client = getClient(userOne.jwt)
-    const deletePostMutation = gql`
-        mutation {
-            deletePost (
-                id : "${postTwo.post.id}"
-            ) {
-                id
-                title
-                body
-                published
-            }
-        }
-    `
+    
+    const variables = {
+        id : postTwo.post.id
+    }
 
-    const { data } = await client.mutate({ mutation : deletePostMutation })
+    const { data } = await client.mutate({ mutation : deletePostMutation, variables })
     expect(data.deletePost).toHaveProperty('id', postTwo.post.id)
     expect(data.deletePost).toHaveProperty('title', postTwo.post.title)
     expect(data.deletePost).toHaveProperty('body', postTwo.post.body)
