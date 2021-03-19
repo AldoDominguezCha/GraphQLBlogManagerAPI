@@ -121,6 +121,25 @@ const deletePostMutation = gql`
     }
 `
 
+const deleteCommentMutation = gql`
+    mutation ($id: ID!) {
+        deleteComment (
+            id : $id
+        ) {
+            id
+            text
+            author {
+                id
+                name
+            }
+            post {
+                id
+                title
+            }
+        }
+    }
+`
+
 export { 
     createUserMutation, 
     getUsers, 
@@ -130,5 +149,6 @@ export {
     myPostsQuery, 
     updatePost, 
     createPostMutation, 
-    deletePostMutation
+    deletePostMutation,
+    deleteCommentMutation
 }

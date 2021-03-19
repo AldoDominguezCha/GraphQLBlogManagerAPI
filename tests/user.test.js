@@ -43,9 +43,9 @@ test('Should expose public user profiles', async () => {
         query : getUsers
     })
 
-    expect(response.data.users).toHaveLength(1)
-    expect(response.data.users[0]).toHaveProperty('name', 'JestSetUpTestUser')
-    expect(response.data.users[0].email).toBeNull()
+    expect(response.data.users).toHaveLength(2)
+    const firstTestUserRetrieved = response.data.users.some((user) => user.name === 'JestSetUpTestUser')
+    expect(firstTestUserRetrieved).toBe(true)
 
 })
 

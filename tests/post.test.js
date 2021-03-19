@@ -1,6 +1,5 @@
 import 'cross-fetch/polyfill'
 import "@babel/polyfill"
-import { gql } from '@apollo/client';
 import prisma from './../src/db'
 import { seedDatabase, cleanDatabase, userOne, postOne, postTwo } from './utils/SeedAndCleanDB';
 import { getClient } from './utils/getClient'
