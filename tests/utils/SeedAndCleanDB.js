@@ -14,6 +14,27 @@ const userOne = {
     jwt : undefined
 }
 
+const postOne = {
+    input : {
+        id : uuidv4(),
+        title : "Jest published test post",
+        body : "Automated testing with Jest - Published",
+        published : true
+    },
+    post : undefined
+}
+
+const postTwo = {
+    input : {
+        id : uuidv4(),
+        title : "Jest unpublished test post",
+        body : "Automated testing with Jest - Unpublished",
+        published : false
+
+    },
+    post : undefined
+}
+
 const seedDatabase = async () => {
     await prisma.$executeRaw('DELETE FROM testing."Comment";')
     await prisma.$executeRaw('DELETE FROM testing."Post";')
@@ -25,25 +46,22 @@ const seedDatabase = async () => {
 
     userOne.jwt = jwt.sign({ userId : userOne.user.id }, process.env.SECRET)
 
-    const publishedTestPost = await prisma.post.create({
+    postOne.post = await prisma.post.create({
         data : {
-            id : uuidv4(),
             authorId : userOne.user.id,
-            title : "Jest published test post",
-            body : "Automated testing with Jest - Published",
-            published : true
+            ...postOne.input
         }
     })
 
-    const unpublishedTestPost = await prisma.post.create({
+    postTwo.post = await prisma.post.create({
         data : {
-            id : uuidv4(),
             authorId : userOne.user.id,
-            title : "Jest unpublished test post",
-            body : "Automated testing with Jest - Unpublished",
-            published : false
+            ...postTwo.input
         }
     })
+
+    const publishedTestPost = postOne.post
+    const unpublishedTestPost = postTwo.post
 
     expect(publishedTestPost).toBeDefined()
     expect(publishedTestPost).toHaveProperty('authorId', userOne.user.id)
@@ -61,4 +79,4 @@ const cleanDatabase = async () => {
     await prisma.$executeRaw('DELETE FROM testing."User";')
 }
 
-export { seedDatabase, cleanDatabase, userOne }
+export { seedDatabase, cleanDatabase, userOne, postOne, postTwo }
