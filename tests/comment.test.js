@@ -3,7 +3,7 @@ import "@babel/polyfill"
 import prisma from './../src/db'
 import { seedDatabase, cleanDatabase, userOne, userTwo, postOne, postTwo, commentOne, commentTwo } from './utils/SeedAndCleanDB';
 import { getClient } from './utils/getClient'
-import { deleteCommentMutation } from './utils/operationStrings'
+import { deleteCommentMutation, subscribeToComments } from './utils/operationStrings'
 
 const client = getClient()
 
@@ -73,4 +73,6 @@ test('Should not delete a comment that does not belong to the authenticated user
     expect(commentTwoFromDB.author).toHaveProperty('name', userTwo.input.name)
     expect(commentTwoFromDB.post).toHaveProperty('id', postOne.input.id)
     expect(commentTwoFromDB.post).toHaveProperty('title', postOne.input.title)
+
 })
+
